@@ -2,12 +2,11 @@ package info.m2sj.springfluxandredis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -21,8 +20,9 @@ public class BasicRouter {
     @Bean
     RouterFunction<ServerResponse> empRouterList() {
         return route()
-                .GET("/list", accept(APPLICATION_JSON), serverRequest -> ServerResponse.ok().body(BodyInserters.fromObject("list!!")))
-                .GET("/load", accept(APPLICATION_JSON), serverRequest -> {
+                .GET("/reactor-list", serverRequest -> ServerResponse.ok().contentType(MediaType.TEXT_HTML).body(basicService.findReactorList(), String.class))
+                .GET("/normal-list", serverRequest -> ServerResponse.ok().contentType(MediaType.TEXT_HTML).body(basicService.findNormalList(), String.class))
+                .GET("/load", serverRequest -> {
                     basicService.loadData();
                     return ServerResponse.ok().body(BodyInserters.fromObject("Load Data Completed"));
                 })
